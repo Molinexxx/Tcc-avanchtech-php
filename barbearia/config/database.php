@@ -1,12 +1,29 @@
 <?php
 
-$host = "localhost";
-$user = "root";
-$password = "";
-$db = "barbearia";
+class Database
+{
+    private $host = "localhost";
+    private $db_name = "barbearia";
+    private $username = "root";
+    private $password = "";
 
-$conn = mysqli_connect($host, $user, $password, $db);
+    public function getConnection()
+    {
+        $conn = null;
 
-if(!$conn){
-    die("Erro na conexão com o banco");
+        try {
+            $conn = new PDO(
+                "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
+                $this->username,
+                $this->password
+            );
+
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        } catch (PDOException $e) {
+            echo "Erro de conexão: " . $e->getMessage();
+        }
+
+        return $conn;
+    }
 }

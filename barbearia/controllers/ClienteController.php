@@ -1,6 +1,6 @@
 <?php
-
-require_once __DIR__ . '/../models/Cliente.php';
+require_once __DIR__ . '/../config/auth.php';
+require_once __DIR__ . '/../models/cliente.php';
 
 class ClienteController {
 
@@ -11,11 +11,13 @@ class ClienteController {
     }
 
     public function listar(){
-        return $this->cliente->listar();
+        $barbearia_id = $_SESSION['barbearia_id'];
+        return $this->cliente->listar($barbearia_id);
     }
 
     public function salvar($nome, $telefone, $servico){
-        return $this->cliente->cadastrar($nome, $telefone, $servico);
+        $barbearia_id = $_SESSION['barbearia_id'];
+        return $this->cliente->cadastrar($nome, $telefone, $servico, $barbearia_id);
     }
 
     public function excluir($id){

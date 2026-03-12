@@ -1,22 +1,20 @@
 <?php
-
 require_once __DIR__ . '/../config/database.php';
 
 class Servico {
 
-    public function listar(){
+    private $conn;
 
-        global $conn;
-
-        $sql = "SELECT * FROM servicos ORDER BY nome ASC";
-        $result = mysqli_query($conn, $sql);
-
-        $servicos = [];
-
-        while($row = mysqli_fetch_assoc($result)){
-            $servicos[] = $row;
-        }
-
-        return $servicos;
+    public function __construct(){
+        $database = new Database();
+        $this->conn = $database->getConnection();
     }
+
+    public function listar(){
+        $sql = "SELECT * FROM servicos";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }

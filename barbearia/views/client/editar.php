@@ -1,13 +1,21 @@
 <?php
+require_once __DIR__ . '/../../config/auth.php';
+require_once __DIR__ . '/../../models/Cliente.php';
+require_once __DIR__ . '/../../models/Servico.php';
 
-require_once("../../models/Cliente.php");
-require_once("../../models/Servico.php");
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    die('ID do cliente não informado.');
+}
 
 $model = new Cliente();
 $cliente = $model->buscarPorId($_GET['id']);
+
+if (!$cliente) {
+    die('Cliente não encontrado.');
+}
+
 $servicoModel = new Servico();
 $servicos = $servicoModel->listar();
-
 ?>
 
 <!DOCTYPE html>
@@ -35,29 +43,26 @@ $servicos = $servicoModel->listar();
 
                             <div class="mb-3">
                                 <label class="form-label">Nome</label>
-                                <input type="text" name="nome" class="form-control" value="<?php echo $cliente['nome']; ?>" required>
+                                <input type="text" name="nome" class="form-control" value="<?php echo htmlspecialchars($cliente['nome']); ?>" required>
                             </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Telefone</label>
-                                <input type="text" name="telefone" class="form-control" value="<?php echo $cliente['telefone']; ?>" required>
+                                <input type="text" name="telefone" class="form-control" value="<?php echo htmlspecialchars($cliente['telefone']); ?>" required>
                             </div>
+
                             <div class="mb-3">
                                 <label class="form-label">Serviço</label>
-
                                 <select name="servico" class="form-control" required>
-
-                                    <?php foreach($servicos as $servicoItem){ ?>
-
-                                    <option value="<?php echo $servicoItem['nome']; ?>"
-                                        <?php echo ($row['servico'] == $servicoItem['nome']) ? 'selected' : ''; ?>>
-
-                                        <?php echo $servicoItem['nome']; ?> - R$ <?php echo number_format($servicoItem['preco'],2,',','.'); ?>
-                                    </option>
-
+                                    <?php foreach ($servicos as $servicoItem) { ?>
+                                        <option value="<?php echo htmlspecialchars($servicoItem['nome']); ?>"
+                                            <?php echo ($cliente['servico'] == $servicoItem['nome']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($servicoItem['nome']); ?> - R$ <?php echo number_format($servicoItem['preco'], 2, ',', '.'); ?>
+                                        </option>
                                     <?php } ?>
                                 </select>
                             </div>
+
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn btn-warning">Atualizar</button>
                                 <a href="index.php" class="btn btn-light">Voltar</a>

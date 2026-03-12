@@ -1,81 +1,46 @@
 <?php
-
 require_once __DIR__ . '/../config/database.php';
 
 class Cliente {
 
-    public function listar(){
+    private $conn;
 
-        global $conn;
-
-        $sql = "SELECT * FROM clientes";
-
-        $result = $conn->query($sql);
-
-        $clientes = [];
-
-        while($row = $result->fetch_assoc()){
-            $clientes[] = $row;
-        }
-
-        return $clientes;
+    public function __construct(){
+        $database = new Database();
+        $this->conn = $database->getConnection();
     }
 
-   public function buscarPorId($id){
-
-        global $conn;
-
-        $sql = "SELECT * FROM clientes WHERE id = ?";
-
-        $stmt = $conn->prepare($sql);
-
-        $stmt->bind_param("i", $id);
-
-        $stmt->execute();
-
-        $result = $stmt->get_result();
-
-        return $result->fetch_assoc();
+    public function listar($barbearia_id){
+        $sql = "SELECT * FROM clientes WHERE barbearia_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$barbearia_id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function cadastrar($nome, $telefone, $servico){
-         global $conn;
-
-        $sql = "INSERT INTO clientes (nome, telefone, servico)
-            VALUES (?, ?, ?)";
-
-        $stmt = $conn->prepare($sql);
-
-        $stmt->bind_param("sss", $nome, $telefone, $servico);
-
-        return $stmt->execute();
-    }
-
-    public function atualizar($id, $nome, $telefone, $servico){
-
-        global $conn;
-
-        $sql = "UPDATE clientes
-                SET nome=?, telefone=?, servico=?
-                WHERE id=?";
-
-        $stmt = $conn->prepare($sql);
-
-        $stmt->bind_param("sssi", $nome, $telefone, $servico, $id);
-
-        return $stmt->execute();
+    public function cadastrar($nome, $telefone, $servico, $barbearia_id){
+        $sql = "INSERT INTO clientes (nome, telefone, servico, barbearia_id)
+                VALUES (?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$nome, $telefone, $servico, $barbearia_id]);
     }
 
     public function excluir($id){
-
-        global $conn;
-
-        $sql = "DELETE FROM clientes WHERE id=?";
-
-        $stmt = $conn->prepare($sql);
-
-        $stmt->bind_param("i", $id);
-
-        return $stmt->execute();
+        $sql = "DELETE FROM clientes WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$id]);
     }
+
+    public function atualizar($id, $nome, $telefone, $servico){
+        $sql = "UPDATE clientes
+                SET nome = ?, telefone = ?, servico = ?
+                WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$nome, $telefone, $servico, $id]);
+    }
+    public function buscarPorId($id){
+    $sql = "SELECT * FROM clientes WHERE id = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
 }
