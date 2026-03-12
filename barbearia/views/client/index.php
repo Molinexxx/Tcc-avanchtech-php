@@ -12,6 +12,8 @@ $clientes = $controller->listar();
 <head>
     <meta charset="UTF-8">
     <title>Barbearia Sistema</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </head>
@@ -72,7 +74,7 @@ $clientes = $controller->listar();
                                 Editar
                             </a>
 
-                            <a href="../../controllers/cliente_actions.php?action=excluir&id=<?php echo $item['id']; ?>" class="btn btn-danger btn-sm">
+                            <a href="../../controllers/cliente_actions.php?action=excluir&id=<?php echo $item['id']; ?>" class="btn btn-danger btn-sm"; onclick="return confirm('Tem certeza que deseja excluir este cliente?')">
                                 Excluir
                             </a>
                         </td>

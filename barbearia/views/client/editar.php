@@ -1,9 +1,12 @@
 <?php
 
 require_once("../../models/Cliente.php");
+require_once("../../models/Servico.php");
 
 $model = new Cliente();
 $cliente = $model->buscarPorId($_GET['id']);
+$servicoModel = new Servico();
+$servicos = $servicoModel->listar();
 
 ?>
 
@@ -12,6 +15,7 @@ $cliente = $model->buscarPorId($_GET['id']);
 <head>
     <meta charset="UTF-8">
     <title>Editar Cliente</title>
+    <link rel="stylesheet" href="../../css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-dark text-light">
@@ -38,12 +42,22 @@ $cliente = $model->buscarPorId($_GET['id']);
                                 <label class="form-label">Telefone</label>
                                 <input type="text" name="telefone" class="form-control" value="<?php echo $cliente['telefone']; ?>" required>
                             </div>
-
                             <div class="mb-3">
                                 <label class="form-label">Serviço</label>
-                                <input type="text" name="servico" class="form-control" value="<?php echo $cliente['servico']; ?>" required>
-                            </div>
 
+                                <select name="servico" class="form-control" required>
+
+                                    <?php foreach($servicos as $servicoItem){ ?>
+
+                                    <option value="<?php echo $servicoItem['nome']; ?>"
+                                        <?php echo ($row['servico'] == $servicoItem['nome']) ? 'selected' : ''; ?>>
+
+                                        <?php echo $servicoItem['nome']; ?> - R$ <?php echo number_format($servicoItem['preco'],2,',','.'); ?>
+                                    </option>
+
+                                    <?php } ?>
+                                </select>
+                            </div>
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn btn-warning">Atualizar</button>
                                 <a href="index.php" class="btn btn-light">Voltar</a>

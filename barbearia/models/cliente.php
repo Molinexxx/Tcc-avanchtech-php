@@ -9,55 +9,73 @@ class Cliente {
         global $conn;
 
         $sql = "SELECT * FROM clientes";
-        $result = mysqli_query($conn, $sql);
+
+        $result = $conn->query($sql);
+
         $clientes = [];
 
-        while($row = mysqli_fetch_assoc($result)){
+        while($row = $result->fetch_assoc()){
             $clientes[] = $row;
         }
 
         return $clientes;
     }
 
-    public function buscarPorId($id){
+   public function buscarPorId($id){
 
         global $conn;
 
-        $sql = "SELECT * FROM clientes WHERE id=$id";
-        $result = mysqli_query($conn,$sql);
+        $sql = "SELECT * FROM clientes WHERE id = ?";
 
-        return mysqli_fetch_assoc($result);
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bind_param("i", $id);
+
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        return $result->fetch_assoc();
     }
 
-    public function cadastrar($nome,$telefone,$servico){
+    public function cadastrar($nome, $telefone, $servico){
+         global $conn;
 
-        global $conn;
-        $sql = "INSERT INTO clientes (nome,telefone,servico)
-                VALUES ('$nome','$telefone','$servico')";
+        $sql = "INSERT INTO clientes (nome, telefone, servico)
+            VALUES (?, ?, ?)";
 
-        return mysqli_query($conn,$sql);
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bind_param("sss", $nome, $telefone, $servico);
+
+        return $stmt->execute();
     }
 
-    public function atualizar($id,$nome,$telefone,$servico){
+    public function atualizar($id, $nome, $telefone, $servico){
 
         global $conn;
 
-        $sql = "UPDATE clientes 
-                SET nome='$nome',
-                    telefone='$telefone',
-                    servico='$servico'
-                WHERE id=$id";
+        $sql = "UPDATE clientes
+                SET nome=?, telefone=?, servico=?
+                WHERE id=?";
 
-        return mysqli_query($conn,$sql);
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bind_param("sssi", $nome, $telefone, $servico, $id);
+
+        return $stmt->execute();
     }
 
     public function excluir($id){
 
         global $conn;
 
-        $sql = "DELETE FROM clientes WHERE id=$id";
+        $sql = "DELETE FROM clientes WHERE id=?";
 
-        return mysqli_query($conn,$sql);
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bind_param("i", $id);
+
+        return $stmt->execute();
     }
-
 }
