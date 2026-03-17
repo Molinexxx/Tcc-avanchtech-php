@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/config/database.php';
 
 try {
@@ -6,9 +7,9 @@ try {
     $conn = $database->getConnection();
 
     if ($conn) {
-        echo "Conexão OK";
+        echo "Conexao OK";
     } else {
-        echo "Falha na conexão";
+        echo "Falha na conexao";
     }
 } catch (Throwable $e) {
     echo "Erro: " . $e->getMessage();

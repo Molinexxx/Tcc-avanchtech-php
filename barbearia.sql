@@ -1,183 +1,130 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Tempo de geração: 12/03/2026 às 16:02
--- Versão do servidor: 10.4.32-MariaDB
--- Versão do PHP: 8.0.30
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Banco de dados: `barbearia`
---
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `barbearias`
---
+DROP DATABASE IF EXISTS `barbearia`;
+CREATE DATABASE `barbearia` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `barbearia`;
 
 CREATE TABLE `barbearias` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   `email` varchar(150) DEFAULT NULL,
   `telefone` varchar(20) DEFAULT NULL,
   `endereco` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `barbearias`
---
-
-INSERT INTO `barbearias` (`id`, `nome`, `email`, `telefone`, `endereco`, `created_at`) VALUES
-(1, 'Barbearia Avanch Tech', 'contato@avanchtech.com', '(11) 99999-9999', 'Rua Exemplo, 123', '2026-03-12 14:51:30');
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `clientes`
---
-
-CREATE TABLE `clientes` (
-  `id` int(11) NOT NULL,
-  `nome` varchar(100) DEFAULT NULL,
-  `telefone` varchar(20) DEFAULT NULL,
-  `servico` varchar(100) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `clientes`
---
-
-INSERT INTO `clientes` (`id`, `nome`, `telefone`, `servico`) VALUES
-(4, 'kaua', '1199999999', 'Barba');
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `servicos`
---
-
-CREATE TABLE `servicos` (
-  `id` int(11) NOT NULL,
-  `nome` varchar(100) NOT NULL,
-  `preco` decimal(10,2) NOT NULL,
-  `duracao_min` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `servicos`
---
-
-INSERT INTO `servicos` (`id`, `nome`, `preco`, `duracao_min`, `created_at`) VALUES
-(1, 'Corte de cabelo', 35.00, 40, '2026-03-12 12:50:20'),
-(2, 'Barba', 25.00, 30, '2026-03-12 12:50:20'),
-(3, 'Corte + Barba', 55.00, 60, '2026-03-12 12:50:20');
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `usuarios`
---
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   `email` varchar(150) NOT NULL,
   `senha` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `barbearia_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `role` varchar(30) NOT NULL DEFAULT 'barbeiro',
+  `barbearia_id` int NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_usuarios_email` (`email`),
+  KEY `idx_usuarios_barbearia` (`barbearia_id`),
+  CONSTRAINT `fk_usuarios_barbearias` FOREIGN KEY (`barbearia_id`) REFERENCES `barbearias` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Despejando dados para a tabela `usuarios`
---
+CREATE TABLE `clientes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `barbearia_id` int NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `telefone` varchar(20) NOT NULL,
+  `servico` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_clientes_barbearia` (`barbearia_id`),
+  CONSTRAINT `fk_clientes_barbearias` FOREIGN KEY (`barbearia_id`) REFERENCES `barbearias` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha`, `created_at`, `barbearia_id`) VALUES
-(1, 'Administrador', 'admin@barbearia.com', '$2y$10$.fVQbmd8XxLUk8IDOQ8X1.E1Damp78/llN8uu1P8rg9wVUiCqZIvC', '2026-03-12 13:48:41', 1);
+CREATE TABLE `servicos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `barbearia_id` int NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `preco` decimal(10,2) NOT NULL,
+  `duracao_min` int NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_servicos_barbearia` (`barbearia_id`),
+  CONSTRAINT `fk_servicos_barbearias` FOREIGN KEY (`barbearia_id`) REFERENCES `barbearias` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Índices para tabelas despejadas
---
+CREATE TABLE `agendamentos` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `barbearia_id` int NOT NULL,
+  `cliente_id` int NOT NULL,
+  `servico_id` int NOT NULL,
+  `usuario_id` int NOT NULL,
+  `data_hora` datetime NOT NULL,
+  `status` enum('pendente','confirmado','concluido','cancelado') NOT NULL DEFAULT 'pendente',
+  `observacoes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_agendamentos_barbearia` (`barbearia_id`),
+  KEY `idx_agendamentos_cliente` (`cliente_id`),
+  KEY `idx_agendamentos_servico` (`servico_id`),
+  KEY `idx_agendamentos_usuario` (`usuario_id`),
+  CONSTRAINT `fk_agendamentos_barbearias` FOREIGN KEY (`barbearia_id`) REFERENCES `barbearias` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_agendamentos_clientes` FOREIGN KEY (`cliente_id`) REFERENCES `clientes` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_agendamentos_servicos` FOREIGN KEY (`servico_id`) REFERENCES `servicos` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_agendamentos_usuarios` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Índices de tabela `barbearias`
---
-ALTER TABLE `barbearias`
-  ADD PRIMARY KEY (`id`);
+CREATE TABLE `horarios_funcionamento` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `barbearia_id` int NOT NULL,
+  `dia_semana` tinyint NOT NULL,
+  `aberto` tinyint(1) NOT NULL DEFAULT 1,
+  `hora_inicio` time DEFAULT NULL,
+  `hora_fim` time DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_horario_barbearia_dia` (`barbearia_id`,`dia_semana`),
+  CONSTRAINT `fk_horarios_barbearias` FOREIGN KEY (`barbearia_id`) REFERENCES `barbearias` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Índices de tabela `clientes`
---
-ALTER TABLE `clientes`
-  ADD PRIMARY KEY (`id`);
+CREATE TABLE `pausas_usuarios` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `barbearia_id` int NOT NULL,
+  `usuario_id` int NOT NULL,
+  `data_inicio` datetime NOT NULL,
+  `data_fim` datetime NOT NULL,
+  `motivo` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_pausas_barbearia` (`barbearia_id`),
+  KEY `idx_pausas_usuario` (`usuario_id`),
+  CONSTRAINT `fk_pausas_barbearias` FOREIGN KEY (`barbearia_id`) REFERENCES `barbearias` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_pausas_usuarios` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Índices de tabela `servicos`
---
-ALTER TABLE `servicos`
-  ADD PRIMARY KEY (`id`);
+INSERT INTO `barbearias` (`id`, `nome`, `email`, `telefone`, `endereco`) VALUES
+(1, 'Barbearia Avanch Tech', 'contato@avanchtech.com', '(11) 99999-9999', 'Rua Exemplo, 123');
 
---
--- Índices de tabela `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD KEY `fk_usuario_barbearia` (`barbearia_id`);
+INSERT INTO `usuarios` (`id`, `nome`, `email`, `senha`, `role`, `barbearia_id`) VALUES
+(1, 'Administrador', 'admin@barbearia.com', '$2y$10$.fVQbmd8XxLUk8IDOQ8X1.E1Damp78/llN8uu1P8rg9wVUiCqZIvC', 'admin', 1),
+(2, 'Carlos Barbeiro', 'carlos@barbearia.com', '$2y$10$.fVQbmd8XxLUk8IDOQ8X1.E1Damp78/llN8uu1P8rg9wVUiCqZIvC', 'barbeiro', 1);
 
---
--- AUTO_INCREMENT para tabelas despejadas
---
+INSERT INTO `servicos` (`id`, `barbearia_id`, `nome`, `preco`, `duracao_min`) VALUES
+(1, 1, 'Corte tradicional', 35.00, 40),
+(2, 1, 'Barba', 25.00, 30),
+(3, 1, 'Corte + barba', 55.00, 60);
 
---
--- AUTO_INCREMENT de tabela `barbearias`
---
-ALTER TABLE `barbearias`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+INSERT INTO `clientes` (`id`, `barbearia_id`, `nome`, `telefone`, `servico`) VALUES
+(1, 1, 'Kaua', '1199999999', 'Barba'),
+(2, 1, 'Marcos', '11988887777', 'Corte tradicional');
 
---
--- AUTO_INCREMENT de tabela `clientes`
---
-ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+INSERT INTO `agendamentos` (`id`, `barbearia_id`, `cliente_id`, `servico_id`, `usuario_id`, `data_hora`, `status`, `observacoes`) VALUES
+(1, 1, 1, 2, 2, '2026-03-16 14:00:00', 'confirmado', 'Cliente prefere acabamento na navalha'),
+(2, 1, 2, 1, 1, '2026-03-16 16:00:00', 'pendente', 'Primeiro atendimento');
 
---
--- AUTO_INCREMENT de tabela `servicos`
---
-ALTER TABLE `servicos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+INSERT INTO `horarios_funcionamento` (`barbearia_id`, `dia_semana`, `aberto`, `hora_inicio`, `hora_fim`) VALUES
+(1, 0, 0, NULL, NULL),
+(1, 1, 1, '09:00:00', '19:00:00'),
+(1, 2, 1, '09:00:00', '19:00:00'),
+(1, 3, 1, '09:00:00', '19:00:00'),
+(1, 4, 1, '09:00:00', '19:00:00'),
+(1, 5, 1, '09:00:00', '19:00:00'),
+(1, 6, 1, '09:00:00', '17:00:00');
 
---
--- AUTO_INCREMENT de tabela `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- Restrições para tabelas despejadas
---
-
---
--- Restrições para tabelas `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD CONSTRAINT `fk_usuario_barbearia` FOREIGN KEY (`barbearia_id`) REFERENCES `barbearias` (`id`),
-  ADD CONSTRAINT `fk_usuarios_barbearias` FOREIGN KEY (`barbearia_id`) REFERENCES `barbearias` (`id`);
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+INSERT INTO `pausas_usuarios` (`barbearia_id`, `usuario_id`, `data_inicio`, `data_fim`, `motivo`) VALUES
+(1, 2, '2026-03-16 12:00:00', '2026-03-16 13:00:00', 'Almoco');

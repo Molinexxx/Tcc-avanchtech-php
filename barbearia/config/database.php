@@ -2,26 +2,27 @@
 
 class Database
 {
-    private $host = "localhost";
-    private $db_name = "barbearia";
-    private $username = "root";
-    private $password = "";
+    private string $host = "localhost";
+    private string $dbName = "barbearia";
+    private string $username = "root";
+    private string $password = "";
 
-    public function getConnection()
+    public function getConnection(): ?PDO
     {
         $conn = null;
 
         try {
             $conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
+                "mysql:host={$this->host};dbname={$this->dbName};charset=utf8mb4",
                 $this->username,
-                $this->password
+                $this->password,
+                [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                ]
             );
-
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
         } catch (PDOException $e) {
-            echo "Erro de conexão: " . $e->getMessage();
+            echo "Erro de conexao: " . $e->getMessage();
         }
 
         return $conn;

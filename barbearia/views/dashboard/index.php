@@ -1,20 +1,29 @@
 <?php
-$userName = $userName ?? 'Usuário';
+
+$userName = $userName ?? 'Usuario';
 $totalHoje = $totalHoje ?? 0;
 $confirmadosHoje = $confirmadosHoje ?? 0;
 $pendentesHoje = $pendentesHoje ?? 0;
 $concluidosHoje = $concluidosHoje ?? 0;
 $canceladosHoje = $canceladosHoje ?? 0;
 $proximosAgendamentos = $proximosAgendamentos ?? [];
+$totalClientes = $totalClientes ?? 0;
+$totalServicos = $totalServicos ?? 0;
+$totalBarbeiros = $totalBarbeiros ?? 0;
+$dashboardTitle = $dashboardTitle ?? 'Dashboard da Agenda';
+$dashboardSubtitle = $dashboardSubtitle ?? 'Painel operacional da barbearia';
+$dashboardCta = $dashboardCta ?? '+ Novo agendamento';
+$dashboardCtaLink = $dashboardCtaLink ?? '/barbearia/views/schedule/index.php';
+$showSecondaryStats = $showSecondaryStats ?? true;
 
 function formatarStatusClasse($status)
 {
     return match ($status) {
         'confirmado' => 'badge-confirmado',
-        'pendente'   => 'badge-pendente',
-        'concluido'  => 'badge-concluido',
-        'cancelado'  => 'badge-cancelado',
-        default      => 'badge-default'
+        'pendente' => 'badge-pendente',
+        'concluido' => 'badge-concluido',
+        'cancelado' => 'badge-cancelado',
+        default => 'badge-default'
     };
 }
 ?>
@@ -31,14 +40,25 @@ function formatarStatusClasse($status)
         <aside class="sidebar">
             <div>
                 <h2 class="logo">BarberPro</h2>
-                <p class="subtitle">Painel da barbearia</p>
+                <p class="subtitle">Painel operacional da barbearia</p>
 
                 <nav class="menu">
                     <a href="/barbearia/dashboard.php" class="menu-item active">Dashboard</a>
-                    <a href="#" class="menu-item">Agenda</a>
-                    <a href="/barbearia/views/client/index.php" class="menu-item">Clientes</a>
-                    <a href="#" class="menu-item">Serviços</a>
-                    <a href="#" class="menu-item">Usuários</a>
+                    <?php if (in_array(currentUserRole(), ['admin', 'recepcao', 'barbeiro'], true)): ?>
+                        <a href="/barbearia/views/schedule/index.php" class="menu-item">Agenda</a>
+                    <?php endif; ?>
+                    <?php if (in_array(currentUserRole(), ['admin', 'recepcao', 'barbeiro'], true)): ?>
+                        <a href="/barbearia/views/client/index.php" class="menu-item">Clientes</a>
+                    <?php endif; ?>
+                    <?php if (in_array(currentUserRole(), ['admin', 'recepcao'], true)): ?>
+                        <a href="/barbearia/views/service/index.php" class="menu-item">Servicos</a>
+                    <?php endif; ?>
+                    <?php if (in_array(currentUserRole(), ['admin', 'recepcao'], true)): ?>
+                        <a href="/barbearia/views/settings/index.php" class="menu-item">Disponibilidade</a>
+                    <?php endif; ?>
+                    <?php if (currentUserRole() === 'admin'): ?>
+                        <a href="/barbearia/views/user/index.php" class="menu-item">Usuarios</a>
+                    <?php endif; ?>
                 </nav>
             </div>
 
@@ -48,12 +68,18 @@ function formatarStatusClasse($status)
         <main class="content">
             <header class="header">
                 <div>
-                    <h1>Dashboard da Agenda</h1>
-                    <p>Bem-vindo, <?= htmlspecialchars($userName) ?></p>
+                    <h1><?= htmlspecialchars($dashboardTitle) ?></h1>
+                    <p><?= htmlspecialchars($dashboardSubtitle) ?>. Bem-vindo, <?= htmlspecialchars($userName) ?></p>
                 </div>
 
-                <a href="#" class="primary-btn">+ Novo agendamento</a>
+                <a href="<?= htmlspecialchars($dashboardCtaLink) ?>" class="primary-btn"><?= htmlspecialchars($dashboardCta) ?></a>
             </header>
+
+            <?php if (isset($_GET['erro']) && $_GET['erro'] === 'acesso'): ?>
+                <section class="panel" style="margin-bottom: 24px;">
+                    <p class="empty-state">Voce nao tem permissao para acessar essa area.</p>
+                </section>
+            <?php endif; ?>
 
             <section class="stats">
                 <div class="stat-card">
@@ -72,7 +98,7 @@ function formatarStatusClasse($status)
                 </div>
 
                 <div class="stat-card">
-                    <span>Concluídos</span>
+                    <span>Concluidos</span>
                     <strong><?= $concluidosHoje ?></strong>
                 </div>
 
@@ -82,10 +108,29 @@ function formatarStatusClasse($status)
                 </div>
             </section>
 
+            <?php if ($showSecondaryStats): ?>
+                <section class="stats stats-secondary">
+                    <div class="stat-card soft-card">
+                        <span>Clientes cadastrados</span>
+                        <strong><?= $totalClientes ?></strong>
+                    </div>
+
+                    <div class="stat-card soft-card">
+                        <span>Servicos ativos</span>
+                        <strong><?= $totalServicos ?></strong>
+                    </div>
+
+                    <div class="stat-card soft-card">
+                        <span>Profissionais</span>
+                        <strong><?= $totalBarbeiros ?></strong>
+                    </div>
+                </section>
+            <?php endif; ?>
+
             <section class="panel">
                 <div class="panel-header">
-                    <h2>Próximos agendamentos</h2>
-                    <a href="#" class="link-btn">Ver todos</a>
+                    <h2><?= currentUserRole() === 'barbeiro' ? 'Seus proximos agendamentos' : 'Proximos agendamentos' ?></h2>
+                    <a href="/barbearia/views/schedule/index.php<?= currentUserRole() === 'barbeiro' ? '?scope=meus' : '' ?>" class="link-btn">Ver todos</a>
                 </div>
 
                 <?php if (!empty($proximosAgendamentos)): ?>
@@ -93,9 +138,9 @@ function formatarStatusClasse($status)
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Horário</th>
+                                    <th>Horario</th>
                                     <th>Cliente</th>
-                                    <th>Serviço</th>
+                                    <th>Servico</th>
                                     <th>Barbeiro</th>
                                     <th>Status</th>
                                 </tr>
@@ -119,7 +164,7 @@ function formatarStatusClasse($status)
                     </div>
                 <?php else: ?>
                     <div class="empty-state">
-                        <p>Nenhum agendamento encontrado.</p>
+                        <p>Nenhum agendamento encontrado. Cadastre o primeiro para comecar a operar.</p>
                     </div>
                 <?php endif; ?>
             </section>
