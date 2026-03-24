@@ -1,66 +1,37 @@
-# BarberPro SaaS em PHP
+# CRUD basico de barbearia em PHP
 
-Sistema SaaS para barbearias desenvolvido em PHP com estrutura MVC simples, autenticacao por sessao e banco MySQL.
+Projeto simples e didatico feito em **PHP puro + SQLite** para servir como exemplo de CRUD.
 
-## Funcionalidades
+## O que este projeto faz
 
-- cadastro e login de barbearias
-- dashboard com indicadores operacionais
-- gestao de clientes
-- gestao de servicos
-- gestao de usuarios da equipe
-- controle de permissoes por perfil
-- cadastro, edicao e exclusao de agendamentos
-- atualizacao de status dos atendimentos
-- validacao de conflito de horarios
-- agenda geral e minha agenda
-- configuracao de horario de funcionamento
-- cadastro de pausas e indisponibilidade de profissionais
-- isolamento por `barbearia_id`
+- Cadastra agendamentos de clientes da barbearia.
+- Lista todos os agendamentos em uma tabela.
+- Edita um agendamento existente.
+- Exclui um agendamento com confirmacao.
+- Mostra um pequeno resumo com total de agendamentos e faturamento previsto.
 
-## Perfis de acesso
+## Estrutura
 
-- `admin`: acesso total ao sistema
-- `recepcao`: agenda, clientes, servicos e disponibilidade
-- `barbeiro`: visualizacao de clientes e acesso apenas a propria agenda
+- `index.php`: concentra a interface, o processamento do formulario e a listagem.
+- `src/bootstrap.php`: cria a conexao com o banco e inicializa a tabela automaticamente.
+- `src/AppointmentRepository.php`: separa as operacoes do CRUD em metodos claros.
+- `style.css`: deixa a interface mais organizada e agradavel.
+- `database/barbearia.sqlite`: arquivo do banco SQLite, criado automaticamente ao executar.
 
-## Tecnologias
+## Como rodar
 
-- PHP
-- MySQL
-- PDO
-- Bootstrap
-- CSS customizado
+1. Tenha o PHP instalado na maquina.
+2. Abra o terminal na pasta do projeto.
+3. Rode:
 
-## Estrutura do projeto
+```bash
+php -S localhost:8000
+```
 
-- `barbearia/config`: conexao com banco e autenticacao
-- `barbearia/controllers`: regras de negocio e actions
-- `barbearia/models`: acesso ao banco
-- `barbearia/views`: interface do sistema
-- `barbearia/css`: estilos
-- `barbearia.sql`: estrutura completa do banco
+4. Abra o navegador em `http://localhost:8000`.
 
-## Como executar
+## Observacoes
 
-1. Importe o arquivo `barbearia.sql` no MySQL.
-2. Ajuste as credenciais em `barbearia/config/database.php`.
-3. Rode o projeto em um ambiente local com PHP, como XAMPP ou Laragon.
-4. Acesse `/barbearia/views/auth/login.php`.
-
-## Recursos implementados
-
-- multi-barbearia com separacao por empresa
-- dashboard adaptado por perfil
-- controle de equipe
-- validacao de expediente e pausas na agenda
-- restricao de acesso por tipo de usuario
-- manutencao completa de agendamentos
-
-## Proximos passos
-
-- modulo financeiro
-- comandas e pagamentos
-- relatorios
-- historico completo de clientes
-- melhorias de seguranca e deploy
+- O banco SQLite e criado sozinho na primeira execucao.
+- Dois agendamentos de exemplo sao inseridos automaticamente para facilitar os testes.
+- Se quiser trocar SQLite por MySQL depois, a parte mais facil de adaptar fica em `src/bootstrap.php`.
