@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresentacao TCC | CRUD Barbearia</title>
+    <style>
+        :root {
+            --bg: #f3efe8;
+            --panel: rgba(255, 253, 250, 0.95);
+            --panel-strong: #1f1a17;
+            --accent: #b77935;
+            --accent-dark: #8c5a22;
+            --text: #241f1c;
+            --muted: #6e6259;
+            --border: #e5d6c8;
+            --shadow: 0 24px 50px rgba(61, 39, 16, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            min-height: 100%;
+            font-family: Georgia, "Times New Roman", serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(183, 121, 53, 0.18), transparent 24%),
+                linear-gradient(180deg, #f8f4ee 0%, var(--bg) 100%);
+        }
+
+        body {
+            padding: 24px;
+        }
+
+        .deck {
+            width: min(1200px, 100%);
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 18px;
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: var(--panel);
+            box-shadow: var(--shadow);
+        }
+
+        .topbar strong {
+            font-size: 1.05rem;
+            color: var(--panel-strong);
+        }
+
+        .topbar span {
+            color: var(--muted);
+        }
+
+        .topbar-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 999px;
+            padding: 12px 18px;
+            text-decoration: none;
+            cursor: pointer;
+            font: inherit;
+            transition: transform 0.18s ease, opacity 0.18s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+        }
+
+        .button.primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .button.secondary {
+            background: #efe3d3;
+            color: var(--panel-strong);
+        }
+
+        .slides-shell {
+            position: relative;
+            overflow: hidden;
+            border-radius: 28px;
+            border: 1px solid var(--border);
+            background: rgba(255, 251, 246, 0.65);
+            box-shadow: var(--shadow);
+        }
+
+        .slides {
+            position: relative;
+            min-height: 76vh;
+        }
+
+        .slide {
+            display: none;
+            padding: 40px;
+            min-height: 76vh;
+        }
+
+        .slide.active {
+            display: grid;
+            gap: 26px;
+            animation: fade 0.25s ease;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .eyebrow {
+            margin: 0;
+            color: var(--accent-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        h1, h2, h3 {
+            margin: 0;
+            color: var(--panel-strong);
+        }
+
+        h1 {
+            font-size: clamp(2.4rem, 4vw, 4.4rem);
+            line-height: 1.04;
+        }
+
+        h2 {
+            font-size: clamp(1.9rem, 3vw, 3rem);
+        }
+
+        p, li {
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        .hero-grid,
+        .two-columns,
+        .cards-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .hero-grid {
+            grid-template-columns: 1.3fr 0.9fr;
+            align-items: start;
+        }
+
+        .two-columns {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .cards-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .card,
+        .note,
+        .code-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 24px;
+        }
+
+        .note {
+            background: linear-gradient(180deg, #fffdf9 0%, #f7efe5 100%);
+        }
+
+        .card ul,
+        .note ul {
+            padding-left: 18px;
+            margin: 16px 0 0;
+        }
+
+        .highlight {
+            display: inline-flex;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: #f4e8da;
+            color: var(--accent-dark);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .metric {
+            padding: 18px;
+            border-radius: 20px;
+            background: #fff;
+            border: 1px solid var(--border);
+        }
+
+        .metric strong {
+            display: block;
+            font-size: 2rem;
+            color: var(--panel-strong);
+        }
+
+        .code-card pre {
+            margin: 0;
+            overflow-x: auto;
+            font-family: "Courier New", monospace;
+            font-size: 0.96rem;
+            line-height: 1.7;
+            color: var(--panel-strong);
+        }
+
+        .flow {
+            display: grid;
+            gap: 14px;
+        }
+
+        .flow-step {
+            display: grid;
+            grid-template-columns: 56px 1fr;
+            gap: 16px;
+            align-items: start;
+            padding: 18px;
+            border-radius: 20px;
+            background: #fff;
+            border: 1px solid var(--border);
+        }
+
+        .flow-step span {
+            display: grid;
+            place-items: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            background: #f4e8da;
+            color: var(--accent-dark);
+            font-weight: 700;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 22px;
+            border-top: 1px solid var(--border);
+            background: rgba(255, 253, 250, 0.95);
+        }
+
+        .footer-nav small {
+            color: var(--muted);
+        }
+
+        .footer-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 920px) {
+            body {
+                padding: 14px;
+            }
+
+            .slide {
+                padding: 24px;
+            }
+
+            .hero-grid,
+            .two-columns,
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar,
+            .footer-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="deck">
+        <header class="topbar">
+            <div>
+                <strong>Apresentacao do TCC</strong>
+                <span>CRUD de barbearia em PHP puro com SQLite</span>
+            </div>
+            <div class="topbar-actions">
+                <a class="button primary" href="index.php" target="_blank" rel="noreferrer">Abrir projeto</a>
+                <a class="button secondary" href="README.md" target="_blank" rel="noreferrer">Abrir README</a>
+            </div>
+        </header>
+
+        <section class="slides-shell">
+            <div class="slides">
+                <article class="slide active" data-title="Capa">
+                    <div class="hero-grid">
+                        <div class="card">
+                            <p class="eyebrow">Slide 1</p>
+                            <h1>CRUD de Barbearia em PHP para apresentacao de TCC</h1>
+                            <p>
+                                Este projeto foi desenvolvido para demonstrar um sistema simples e funcional de agendamento,
+                                com cadastro, edicao, exclusao, listagem e resumo de informacoes em uma unica aplicacao.
+                            </p>
+                        </div>
+
+                        <div class="note">
+                            <span class="highlight">Resumo rapido</span>
+                            <div class="hero-metrics" style="margin-top: 18px;">
+                                <div class="metric">
+                                    <strong>4</strong>
+                                    <p>operacoes do CRUD</p>
+                                </div>
+                                <div class="metric">
+                                    <strong>3</strong>
+                                    <p>arquivos principais</p>
+                                </div>
+                                <div class="metric">
+                                    <strong>PHP</strong>
+                                    <p>linguagem principal</p>
+                                </div>
+                                <div class="metric">
+                                    <strong>SQLite</strong>
+                                    <p>banco local</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Objetivo">
+                    <div class="two-columns">
+                        <div class="card">
+                            <p class="eyebrow">Slide 2</p>
+                            <h2>Objetivo do sistema</h2>
+                            <ul>
+                                <li>Registrar agendamentos de clientes da barbearia.</li>
+                                <li>Permitir cadastrar, editar, excluir e listar atendimentos.</li>
+                                <li>Exibir indicadores rapidos como total, confirmados e faturamento previsto.</li>
+                                <li>Servir como exemplo simples, autoexplicativo e facil de demonstrar.</li>
+                            </ul>
+                        </div>
+                        <div class="note">
+                            <h3>Problema resolvido</h3>
+                            <p>
+                                Em vez de controlar agenda manualmente, o sistema centraliza os dados do atendimento,
+                                do cliente, do barbeiro e do servico em uma interface unica.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Arquitetura">
+                    <div class="card">
+                        <p class="eyebrow">Slide 3</p>
+                        <h2>Estrutura do codigo</h2>
+                    </div>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <span class="highlight">index.php</span>
+                            <p>
+                                Controla o fluxo principal: recebe requisicoes, valida formulario,
+                                chama o repositorio e renderiza a interface.
+                            </p>
+                        </div>
+                        <div class="card">
+                            <span class="highlight">src/bootstrap.php</span>
+                            <p>
+                                Cria a conexao com o banco SQLite, inicializa a tabela e define funcoes auxiliares.
+                            </p>
+                        </div>
+                        <div class="card">
+                            <span class="highlight">src/AppointmentRepository.php</span>
+                            <p>
+                                Centraliza as operacoes no banco: listar, buscar, criar, atualizar, excluir e resumir.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Fluxo">
+                    <div class="card">
+                        <p class="eyebrow">Slide 4</p>
+                        <h2>Fluxo de funcionamento</h2>
+                    </div>
+                    <div class="flow">
+                        <div class="flow-step">
+                            <span>1</span>
+                            <div>
+                                <h3>Entrada do usuario</h3>
+                                <p>O usuario acessa a tela principal e preenche o formulario de agendamento.</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <span>2</span>
+                            <div>
+                                <h3>Tratamento dos dados</h3>
+                                <p>O `index.php` normaliza os campos e valida se nome, telefone, servico, horario e valor foram informados.</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <span>3</span>
+                            <div>
+                                <h3>Persistencia</h3>
+                                <p>Os dados validados sao enviados ao `AppointmentRepository`, que executa SQL via PDO.</p>
+                            </div>
+                        </div>
+                        <div class="flow-step">
+                            <span>4</span>
+                            <div>
+                                <h3>Retorno visual</h3>
+                                <p>O sistema recarrega a lista, mostra resumo atualizado e exibe mensagem de sucesso ou erro.</p>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Index">
+                    <div class="two-columns">
+                        <div class="code-card">
+                            <p class="eyebrow">Slide 5</p>
+                            <h2>O papel do index.php</h2>
+                            <pre><code>session_start();
+require 'src/bootstrap.php';
+require 'src/AppointmentRepository.php';
+
+$repository = new AppointmentRepository(db());
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // delete
+    // create
+    // update
+}
+
+$appointments = $repository->all();
+$summary = $repository->summary();</code></pre>
+                        </div>
+                        <div class="card">
+                            <h3>O que ele faz</h3>
+                            <ul>
+                                <li>inicia a sessao</li>
+                                <li>carrega os arquivos de apoio</li>
+                                <li>instancia o repositorio</li>
+                                <li>decide se a acao e cadastrar, editar ou excluir</li>
+                                <li>busca dados para preencher a tela</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Bootstrap">
+                    <div class="two-columns">
+                        <div class="card">
+                            <p class="eyebrow">Slide 6</p>
+                            <h2>Bootstrap e banco de dados</h2>
+                            <ul>
+                                <li>Cria a pasta `database` se ela nao existir.</li>
+                                <li>Abre a conexao com SQLite usando PDO.</li>
+                                <li>Configura o modo de erro para excecao.</li>
+                                <li>Cria automaticamente a tabela `agendamentos`.</li>
+                                <li>Insere dois registros iniciais para facilitar o teste.</li>
+                            </ul>
+                        </div>
+                        <div class="code-card">
+                            <pre><code>function db(): PDO {
+    $pdo = new PDO('sqlite:' . $databaseFile);
+    initializeDatabase($pdo);
+    return $pdo;
+}
+
+function initializeDatabase(PDO $pdo): void {
+    $pdo->exec('CREATE TABLE IF NOT EXISTS agendamentos (...)');
+}</code></pre>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Repository">
+                    <div class="card">
+                        <p class="eyebrow">Slide 7</p>
+                        <h2>Repository: onde esta o CRUD</h2>
+                    </div>
+                    <div class="cards-grid">
+                        <div class="card">
+                            <span class="highlight">all() e find()</span>
+                            <p>Leem os registros no banco e permitem listar ou buscar um item especifico.</p>
+                        </div>
+                        <div class="card">
+                            <span class="highlight">create() e update()</span>
+                            <p>Inserem e atualizam agendamentos com `prepare` e parametros nomeados.</p>
+                        </div>
+                        <div class="card">
+                            <span class="highlight">delete() e summary()</span>
+                            <p>Apagam registros e calculam os indicadores que aparecem no topo da tela.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Validacoes">
+                    <div class="two-columns">
+                        <div class="card">
+                            <p class="eyebrow">Slide 8</p>
+                            <h2>Validacoes e seguranca basica</h2>
+                            <ul>
+                                <li>normalizacao dos dados antes de salvar</li>
+                                <li>validacao dos campos obrigatorios</li>
+                                <li>conversao de data e valor para formato consistente</li>
+                                <li>uso de `htmlspecialchars` na saida com a funcao `e()`</li>
+                                <li>uso de `PDO::prepare` para evitar SQL montado manualmente</li>
+                            </ul>
+                        </div>
+                        <div class="note">
+                            <h3>Por que isso importa</h3>
+                            <p>
+                                Mesmo sendo um projeto didatico, ele ja aplica boas praticas basicas:
+                                validar entrada, escapar saida e separar acesso ao banco.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Interface">
+                    <div class="two-columns">
+                        <div class="card">
+                            <p class="eyebrow">Slide 9</p>
+                            <h2>Interface e experiencia do usuario</h2>
+                            <ul>
+                                <li>cards no topo com indicadores</li>
+                                <li>formulario lateral para cadastro e edicao</li>
+                                <li>tabela com a listagem dos agendamentos</li>
+                                <li>alertas de sucesso e erro</li>
+                                <li>layout responsivo com CSS customizado</li>
+                            </ul>
+                        </div>
+                        <div class="note">
+                            <h3>Leitura da interface</h3>
+                            <p>
+                                O usuario consegue entender o sistema rapidamente porque o formulario fica visivel,
+                                a tabela mostra os dados e o resumo apresenta os numeros principais.
+                            </p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Banco de dados">
+                    <div class="two-columns">
+                        <div class="card">
+                            <p class="eyebrow">Slide 10</p>
+                            <h2>Banco de dados</h2>
+                            <ul>
+                                <li>O banco utilizado no projeto e o SQLite.</li>
+                                <li>O arquivo fica salvo em `database/barbearia.sqlite`.</li>
+                                <li>A tabela principal se chama `agendamentos`.</li>
+                                <li>Os principais campos sao: `id`, `cliente`, `telefone`, `servico`, `barbeiro`, `data_horario`, `valor`, `status`, `observacoes` e `created_at`.</li>
+                                <li>Na primeira execucao, a tabela ja e criada automaticamente pelo sistema.</li>
+                            </ul>
+                        </div>
+                        <div class="code-card">
+                            <pre><code>CREATE TABLE IF NOT EXISTS agendamentos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    cliente TEXT NOT NULL,
+    telefone TEXT NOT NULL,
+    servico TEXT NOT NULL,
+    barbeiro TEXT NOT NULL,
+    data_horario TEXT NOT NULL,
+    valor REAL NOT NULL,
+    status TEXT NOT NULL DEFAULT "Agendado",
+    observacoes TEXT DEFAULT "",
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+)</code></pre>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Demonstracao">
+                    <div class="two-columns">
+                        <div class="card">
+                            <p class="eyebrow">Slide 11</p>
+                            <h2>Roteiro de demonstracao ao vivo</h2>
+                            <ol style="padding-left: 20px; color: var(--muted); line-height: 1.8;">
+                                <li>Abrir o sistema e mostrar os cards de resumo.</li>
+                                <li>Cadastrar um novo agendamento.</li>
+                                <li>Mostrar o registro surgindo na tabela.</li>
+                                <li>Editar o agendamento.</li>
+                                <li>Excluir o agendamento.</li>
+                                <li>Apontar que os indicadores do topo mudam junto com os dados.</li>
+                            </ol>
+                        </div>
+                        <div class="note">
+                            <h3>Link direto</h3>
+                            <p>Durante a apresentacao, clique no botao abaixo para abrir o projeto real.</p>
+                            <p><a class="button primary" href="index.php" target="_blank" rel="noreferrer">Abrir sistema CRUD</a></p>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="slide" data-title="Conclusao">
+                    <div class="two-columns">
+                        <div class="card">
+                            <p class="eyebrow">Slide 12</p>
+                            <h2>Conclusao e ferramentas utilizadas</h2>
+                            <p>
+                                O projeto entrega um CRUD completo, organizado e apresentavel. Ele demonstra conceitos
+                                importantes de desenvolvimento web, como separacao de responsabilidades, persistencia de dados,
+                                validacao de formularios e interface funcional.
+                            </p>
+                            <h3 style="margin-top: 18px;">Ferramentas usadas no desenvolvimento</h3>
+                            <ul>
+                                <li>PHP</li>
+                                <li>SQLite</li>
+                                <li>PDO</li>
+                                <li>HTML</li>
+                                <li>CSS</li>
+                                <li>XAMPP</li>
+                                <li>VS Code</li>
+                            </ul>
+                        </div>
+                        <div class="note">
+                            <h3>Apoio no processo</h3>
+                            <p>
+                                Durante o desenvolvimento e a organizacao da apresentacao, tambem contei com auxilio de IA
+                                como apoio para estrutura, revisao e explicacao do projeto.
+                            </p>
+                            <h3 style="margin-top: 18px;">Possiveis melhorias futuras</h3>
+                            <ul>
+                                <li>autenticacao por usuario</li>
+                                <li>mais relatorios</li>
+                                <li>filtro por periodo</li>
+                                <li>integracao com MySQL</li>
+                                <li>painel financeiro</li>
+                            </ul>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <footer class="footer-nav">
+                <small id="slide-indicator">Slide 1 de 12</small>
+                <div class="footer-actions">
+                    <button class="button secondary" type="button" id="prev-slide">Anterior</button>
+                    <button class="button primary" type="button" id="next-slide">Proximo</button>
+                </div>
+            </footer>
+        </section>
+    </div>
+
+    <script>
+        const slides = Array.from(document.querySelectorAll(".slide"));
+        const indicator = document.querySelector("#slide-indicator");
+        const nextButton = document.querySelector("#next-slide");
+        const prevButton = document.querySelector("#prev-slide");
+        let currentSlide = 0;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle("active", index === currentSlide);
+            });
+
+            indicator.textContent = `Slide ${currentSlide + 1} de ${slides.length}`;
+            prevButton.disabled = currentSlide === 0;
+            nextButton.disabled = currentSlide === slides.length - 1;
+        }
+
+        nextButton.addEventListener("click", () => {
+            if (currentSlide < slides.length - 1) {
+                currentSlide += 1;
+                updateSlides();
+            }
+        });
+
+        prevButton.addEventListener("click", () => {
+            if (currentSlide > 0) {
+                currentSlide -= 1;
+                updateSlides();
+            }
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowRight") {
+                nextButton.click();
+            }
+
+            if (event.key === "ArrowLeft") {
+                prevButton.click();
+            }
+        });
+
+        updateSlides();
+    </script>
+</body>
+</html>

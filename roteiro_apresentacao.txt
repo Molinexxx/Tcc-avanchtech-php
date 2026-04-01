@@ -1,0 +1,136 @@
+ROTEIRO DA APRESENTACAO DO TCC
+CRUD DE BARBEARIA EM PHP
+
+1. ABERTURA
+- Meu projeto e um CRUD de barbearia desenvolvido em PHP puro.
+- O objetivo foi criar um sistema simples, funcional e facil de entender.
+- O sistema permite cadastrar, listar, editar e excluir agendamentos.
+- Alem disso, ele mostra um resumo com dados importantes da agenda.
+
+2. OBJETIVO DO PROJETO
+- Organizar o controle de atendimentos de uma barbearia.
+- Substituir anotacoes manuais por um sistema digital.
+- Demonstrar integracao entre interface, regras de negocio e banco de dados.
+- Aplicar conceitos de desenvolvimento web de forma pratica.
+
+3. TECNOLOGIAS UTILIZADAS
+- PHP puro
+- SQLite
+- PDO
+- HTML
+- CSS
+- XAMPP
+- VS Code
+
+4. POR QUE EU USEI SQLITE
+- Escolhi SQLite porque ele e simples de configurar e ideal para um projeto didatico.
+- Ele nao precisa de um servidor de banco separado, o que facilita a execucao.
+- O banco fica salvo em um arquivo local, deixando o projeto mais pratico para testes.
+- Para este CRUD, o foco principal e demonstrar a logica do sistema e a integracao com PHP.
+- O SQLite tambem deixa o projeto mais portatil e facil de apresentar.
+
+5. O QUE E PDO E POR QUE EU USEI
+- PDO significa PHP Data Objects.
+- Ele e uma forma padrao do PHP se conectar com banco de dados.
+- Eu usei PDO porque ele deixa a conexao mais organizada e segura.
+- Ele permite usar prepare e execute, evitando montar SQL manualmente de forma insegura.
+- Com PDO, o projeto tambem fica mais facil de adaptar para outro banco no futuro, como MySQL.
+
+6. ESTRUTURA DO CODIGO
+- index.php: controla o fluxo principal da aplicacao.
+- src/bootstrap.php: cria a conexao com o banco e inicializa o sistema.
+- src/AppointmentRepository.php: concentra as operacoes de CRUD no banco.
+- style.css: responsavel pelo visual da interface.
+
+7. COMO O SISTEMA FUNCIONA
+- O usuario entra na tela principal.
+- Preenche o formulario com os dados do cliente e do agendamento.
+- O PHP recebe esses dados e valida os campos obrigatorios.
+- Se estiver tudo certo, os dados sao salvos no banco.
+- Depois disso, a tabela e os cards de resumo sao atualizados.
+
+8. EXPLICACAO DO INDEX.PHP
+- Inicia a sessao com session_start().
+- Importa os arquivos auxiliares com require.
+- Instancia o repositorio que conversa com o banco.
+- Identifica se a acao do formulario e create, update ou delete.
+- Faz a validacao dos campos.
+- Busca os agendamentos cadastrados para mostrar na tabela.
+- Busca o resumo para mostrar os indicadores no topo.
+
+9. EXPLICACAO DO BOOTSTRAP.PHP
+- Cria a pasta database caso ela ainda nao exista.
+- Faz a conexao com o arquivo SQLite.
+- Configura o PDO para trabalhar com excecoes.
+- Cria automaticamente a tabela agendamentos.
+- Insere dois registros iniciais para facilitar testes e demonstracao.
+- Possui funcoes auxiliares como redirect, flash e escape de saida.
+
+10. EXPLICACAO DO APPOINTMENTREPOSITORY.PHP
+- all(): lista todos os agendamentos.
+- find(): busca um agendamento especifico pelo ID.
+- create(): insere um novo registro no banco.
+- update(): altera um registro ja existente.
+- delete(): exclui um agendamento.
+- summary(): calcula os indicadores do topo da tela.
+
+11. VALIDACOES IMPORTANTES
+- O nome do cliente e obrigatorio.
+- O telefone e obrigatorio.
+- O servico e obrigatorio.
+- O barbeiro e obrigatorio.
+- A data e o horario sao obrigatorios.
+- O valor precisa ser maior que zero.
+- Os dados sao tratados antes de salvar no banco.
+- A saida e protegida com htmlspecialchars para evitar exibicao insegura.
+
+12. INTERFACE DO SISTEMA
+- No topo ha cards com resumo da agenda.
+- Na lateral esquerda ha o formulario de cadastro e edicao.
+- Na direita fica a tabela com todos os agendamentos.
+- O usuario consegue editar ou excluir com botoes de acao.
+- O layout e responsivo e visualmente organizado.
+
+13. BANCO DE DADOS
+- O banco utilizado e SQLite.
+- O arquivo do banco fica em database/barbearia.sqlite.
+- A tabela principal se chama agendamentos.
+
+14. CAMPOS DA TABELA AGENDAMENTOS
+- id: identificador unico do agendamento.
+- cliente: nome do cliente.
+- telefone: telefone de contato.
+- servico: servico que sera realizado.
+- barbeiro: profissional responsavel.
+- data_horario: data e horario do atendimento.
+- valor: valor cobrado pelo servico.
+- status: situacao do atendimento, como Agendado ou Concluido.
+- observacoes: campo opcional para detalhes adicionais.
+- created_at: data de criacao do registro.
+
+15. O QUE MOSTRAR NA DEMONSTRACAO
+- Abrir o sistema.
+- Mostrar os cards com indicadores.
+- Cadastrar um novo agendamento.
+- Mostrar o item aparecendo na tabela.
+- Editar esse registro.
+- Excluir o registro.
+- Mostrar que os indicadores mudam junto com os dados.
+
+16. PONTOS IMPORTANTES PARA DESTACAR
+- O sistema funciona de ponta a ponta.
+- O projeto tem separacao simples de responsabilidades.
+- O banco e criado automaticamente.
+- O CRUD esta centralizado em uma classe propria.
+- O sistema ja traz validacoes e protecao basica na saida.
+- A interface facilita o uso e a demonstracao.
+
+17. APOIO DE IA NO PROCESSO
+- Durante o desenvolvimento e a organizacao da apresentacao, contei com apoio de IA.
+- Esse apoio foi usado para revisar explicacoes, estruturar a apresentacao e melhorar a organizacao do material.
+- A implementacao, o entendimento do projeto e a demonstracao continuam sendo apresentados por mim.
+
+18. FECHAMENTO SUGERIDO
+- Este projeto mostra minha capacidade de desenvolver uma aplicacao web completa em PHP.
+- Ele conecta interface, logica de negocio e banco de dados de forma organizada.
+- Como melhoria futura, o sistema pode receber autenticacao, filtros, relatorios e modulo financeiro.
